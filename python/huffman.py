@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 
+import sys
 from argparse import ArgumentParser
 from collections import Counter, namedtuple
 from io import BytesIO
 from json import dumps, loads
 from struct import pack, unpack
-from sys import argv, stdin, stdout
 
 parser = ArgumentParser(
     description="Huffman compression, decompression and visualisation. "
@@ -248,41 +248,33 @@ def decompress(bits: str, tree: dict) -> str:
 def main(args_list: list[str]) -> None:
     args = parser.parse_args(args_list)
 
+    # set up the files to read from and write to
+    # if we are decompressing, we need to read in binary mode
+    stdin = sys.stdin.buffer if args.decompress else sys.stdin
+    inMode = "rb" if args.decompress else "r"
+    infile = open(args.infile, inMode) if args.infile else stdin
+
+    # if we are compressing, we need to write in binary mode
+    compressing = not args.decompress
+    stdout = sys.stdout.buffer if compressing else sys.stdout
+    outMode = "wb" if compressing else "w"
+    outfile = open(args.outfile, outMode) if args.outfile else stdout
+
+    with infile as file:
+        inText = file.read()
+
     if args.decompress:
-        encoded = b""
-
-        if args.infile:
-            with open(args.infile, "rb") as f:
-                encoded = f.read()
-        else:
-            encoded = stdin.buffer.read()
-
-        bits, tree = decode(encoded)
-        decompressed = decompress(bits, tree)
-
-        if args.outfile:
-            with open(args.outfile, "w") as f:
-                f.write(decompressed)
-        else:
-            stdout.write(decompressed)
+        bits, tree = decode(inText)
+        out = decompress(bits, tree)
 
     else:
-        if args.infile:
-            with open(args.infile, "r") as f:
-                text = f.read()
-        else:
-            text = stdin.read()
+        tree = makeTree(inText, args.visualise)
+        bits = compress(inText, tree)
+        out = encode(bits, tree)
 
-        tree = makeTree(text, visualise=args.visualise)
-        bits = compress(text, tree)
-        encoded = encode(bits, tree)
-
-        if args.outfile:
-            with open(args.outfile, "wb") as f:
-                f.write(encoded)
-        else:
-            stdout.buffer.write(encoded)
+    with outfile as file:
+        file.write(out)
 
 
 if __name__ == "__main__":
-    main(argv[1:])
+    main(sys.argv[1:])
