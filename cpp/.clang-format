@@ -1,0 +1,7 @@
+AlignConsecutiveAssignments: Consecutive
+ColumnLimit: 80
+FixNamespaceComments: true
+IncludeBlocks: Regroup
+IndentWidth: 4
+ReflowComments: false
+SortIncludes: CaseInsensitive
