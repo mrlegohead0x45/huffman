@@ -1,0 +1,7 @@
+{
+    "C_Cpp.default.includePath": [
+        // change to your triplet
+        "${workspaceFolder}/cpp/build/vcpkg_installed/x64-mingw-dynamic/include"
+    ],
+    "C_Cpp.default.compileCommands": "${workspaceFolder}/cpp/build/compile_commands.json",
+}

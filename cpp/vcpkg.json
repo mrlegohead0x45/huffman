@@ -1,0 +1,19 @@
+{
+  "name": "huffman",
+  "version": "0.1.0",
+  "description": "Huffman coding",
+  "homepage": "https://github.com/mrlegohead0x45/huffman",
+  "license": "MIT",
+  "dependencies": [
+    "argparse",
+    "nlohmann-json"
+  ],
+  "features": {
+    "visualisation": {
+      "description": "visualise the tree",
+      "dependencies": [
+        "graphviz"
+      ]
+    }
+  }
+}
